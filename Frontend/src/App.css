@@ -1,0 +1,35 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: light --default, dark --prefersdark, cupcake;
+}
+
+@media (min-width: 1000px) {
+  .hide-carousel {
+    display: none;
+  }
+}
+
+@media (max-width: 1000px) {
+  .hide-i-carousel {
+    display: none;
+  }
+}
+
+.bordering {
+  border: 0.2px solid rgb(193, 192, 192);
+}
+
+@font-face {
+  font-family: "alice";
+  src: url("https://fonts.googleapis.com/css2?family=Alice&display=swap")
+    format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@layer base {
+  /* Define custom font as a CSS variable using @theme */
+  @theme {
+    --font-elice: "alice", sans-serif;
+  }
+}
