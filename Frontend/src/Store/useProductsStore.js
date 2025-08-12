@@ -7,7 +7,7 @@ export const useProductsStore = create((set, get) => ({
   product:{},
   isProductLoading: false,
   getProducts: async () => {
-    set({ isProductLoading: false });
+    set({ isProductLoading: true });
     try {
       const product = await axiosInstance.get("products/getproducts");
       console.log(product.data.data);

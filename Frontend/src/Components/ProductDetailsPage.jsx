@@ -38,6 +38,10 @@ const ProductPage = () => {
     const additemtowishlist = (id) => {
         addToWishlist(id);
     };
+    const getProductDetails = (id) => {
+        navigate(`/product/${id}`)
+    };
+
 
     if (isProductLoading) return (<div className="flex items-center justify-center h-screen w-full">
         <Loader className="size-10 animate-spin" />
@@ -177,9 +181,7 @@ const ProductPage = () => {
                                 <div
                                     key={rec.id}
                                     className="border-black/25 cursor-pointer border-1"
-                                    onClick={() =>
-                                        console.log("Go to product details", rec.id)
-                                    }
+                                    onClick={() => { getProductDetails(rec.id) }}
                                 >
                                     <div className="min-w-38 max-w-100 relative">
                                         {addingProductId === rec.id ? (
