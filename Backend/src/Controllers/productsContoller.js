@@ -77,7 +77,18 @@ const editProduct = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+const getProduct = async (req,res)=>{
+  try{
+    const id= Number(req.params.id);
+    const product = await productServices.getProduct(id);
+    res.status(200).json({message:"Here is the product",data:product});
+  }catch(error){  
+    console.log(error)
+    res.status(500).json({message:"Internal Server Error"})
+  }
+}
 export {
+  getProduct,
   getProducts,
   addProduct,
   deleteProduct,

@@ -10,6 +10,9 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import ForgotPassword from "./Components/ForgotPassword";
 import WishlistPage from "./Components/WishlistPage";
+import ProductsPage from "./Components/ProductsPage";
+import ProductPage from "./Components/ProductDetailsPage";
+import Footer from "./Components/Footer";
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -20,7 +23,7 @@ function App() {
   if (isCheckingAuth && !authUser) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <Loader className=" size-10 animate-spin" />
+        <Loader className="size-10 animate-spin" />
       </div>
     );
   }
@@ -41,7 +44,10 @@ function App() {
           path="/cart"
           element={authUser ? <WishlistPage /> : <Navigate to="/" />}
         />
+        <Route path="/products" element={<ProductsPage />} />
+        <Route path="/product/:id" element={<ProductPage />} />
       </Routes>
+      <Footer />
       <Toaster />
     </div>
   );

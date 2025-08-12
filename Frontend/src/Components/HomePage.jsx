@@ -3,8 +3,13 @@ import { useProductsStore } from "../Store/useProductsStore.js";
 import { Heart, Loader } from "lucide-react";
 import { useWishlistStore } from "../Store/useWishlistStore.js";
 import Footer from "./Footer.jsx";
+import main from "../../public/Assest/Hero.jpeg";
+import main2 from "../../public/Assest/Hero2.png";
+import main3 from "../../public/Assest/Hero3.png";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
+  const navigate = useNavigate();
   const { Products, getProducts, isProductLoading } = useProductsStore();
   const {
     addingProductId,
@@ -28,7 +33,9 @@ const HomePage = () => {
     (product) => product.category === "Optical Frames"
   ).slice(0, 6);
 
-  const getProductDetails = () => {};
+  const getProductDetails = (id) => {
+    navigate(`/product/${id}`)
+  };
   const additemtowishlist = (id) => {
     addToWishlist(id);
   };
@@ -40,7 +47,7 @@ const HomePage = () => {
         className="h-[400px] w-full bg-center bg-cover bg-no-repeat md:h-[670px]"
         style={{
           backgroundImage:
-            "url('https://media.gucci.com/content/HeroRegularStandard_3200x1350/1740737739/HeroRegularStandard_Gucci-Eyewear-SS25-Nov24-240725-26-TM-GUCCI-EYEWEAR-SHOT-01-0301-R7_001_Default.jpg')",
+            `url("${main}")`,
         }}
       >
         <div className="flex justify-center items-center flex-col h-full bg-black/10 text-base-300">
@@ -58,14 +65,14 @@ const HomePage = () => {
         <div className="flex justify-center items-center w-full px-5 pb-5 md:pt-2">
           <div className="flex justify-center items-center gap-5 md:gap-20">
             <div className="flex justify-between items-center flex-col">
-              <div className="min-w-[120px] max-w-[350px]">
+              <div className="min-w-[120px] max-w-[350px]" onClick={() => { navigate("/products") }}>
                 <img
                   src="https://ap.louisvuitton.com/images/is/image//content/dam/lv/editorial-content/New-Homepage/2024/central/category/women_sunglasses/Women_SG_WW_HP_Category_Push_20240614_DII.jpg"
                   alt="no image found"
                   className="h-full w-full"
                 />
               </div>
-              <p className="py-3 text-sm md:text-lg">Unisexual Sun Glasses</p>
+              <p className="py-3 text-sm md:text-lg" onClick={() => { navigate("/products") }}>Unisexual Sun Glasses</p>
             </div>
             <div className="flex justify-between items-center flex-col">
               <div className="min-w-[120px] max-w-[350px]">
@@ -82,10 +89,10 @@ const HomePage = () => {
       </div>
       <section>
         <div
-          className="h-[400px] w-full bg-center bg-cover bg-no-repeat md:h-[670px]"
+          className="h-[400px] w-full bg-[position:50%_40%] bg-cover bg-no-repeat md:h-[670px]"
           style={{
             backgroundImage:
-              "url('      https://res.cloudinary.com/dfiaegs54/image/upload/v1744036037/Screen_Shot_2025-04-07_at_19.48.53_rkzviq.png')",
+              `url("${main3}")`
           }}
         ></div>
         <div className="z-10 bg-base-100">
@@ -111,7 +118,7 @@ const HomePage = () => {
                   <div
                     key={product.id}
                     className="border-black/25 cursor-pointer border-1"
-                    onClick={getProductDetails}
+                    onClick={() => { getProductDetails(product.id) }}
                   >
                     <div className="min-w-38 max-w-100 relative">
                       {addingProductId === product.id ? (
@@ -155,7 +162,7 @@ const HomePage = () => {
             )}
           </div>
           <div className="flex justify-center items-center py-10 mb-10">
-            <button className="btn btn-outline p-6 rounded-4xl hover:bg-transparent hover:text-inherit hover:border-2 border-black transition-all duration-400 ease-in-out">
+            <button className="btn btn-outline p-6 rounded-4xl hover:bg-transparent hover:text-inherit hover:border-2 border-black transition-all duration-400 ease-in-out" onClick={() => { navigate("/products") }}>
               Discover The Selection
             </button>
           </div>
@@ -163,10 +170,11 @@ const HomePage = () => {
       </section>
       <section>
         <div
-          className="h-[400px] w-full bg-center bg-cover bg-no-repeat md:h-[670px]"
+          className="h-[400px] w-full bg-left md:bg-center bg-cover bg-no-repeat md:h-[670px]"
           style={{
             backgroundImage:
-              "url('https://ezopticals.com/wp-content/uploads/2021/01/new-1024x427.png')",
+              `url("${main2}")`
+            ,
           }}
         ></div>
         <div className="z-10 bg-base-100">
@@ -192,7 +200,7 @@ const HomePage = () => {
                   <div
                     key={product.id}
                     className="border-black/25 cursor-pointer border-1"
-                    onClick={getProductDetails}
+                    onClick={() => { getProductDetails(product.id) }}
                   >
                     <div className="relative min-w-38 max-w-100 ">
                       {addingProductId === product.id ? (
@@ -235,12 +243,12 @@ const HomePage = () => {
             )}
           </div>
           <div className="flex justify-center items-center py-10">
-            <button className="btn btn-outline p-6 rounded-4xl hover:bg-transparent hover:text-inherit hover:border-2 border-black transition-all duration-400 ease-in-out">
+            <button className="btn btn-outline p-6 rounded-4xl hover:bg-transparent hover:text-inherit hover:border-2 border-black transition-all duration-400 ease-in-out" onClick={() => { navigate("/products") }}>
               Discover The Selection
             </button>
           </div>
         </div>
-      </section>
+      </section >
       <section>
         <div className="flex justify-center items-center text-2xl font-semibold pt-10 pb-3 md:text-3xl">
           TRYIZ SERVICES
@@ -337,8 +345,7 @@ const HomePage = () => {
           </div>
         </div>
       </section>
-      <Footer />
-    </div>
+    </div >
   );
 };
 

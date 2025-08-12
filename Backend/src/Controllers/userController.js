@@ -41,7 +41,7 @@ const signUpUser = async (req, res) => {
       is_verified,
       verificationToken
     );
-    const verificationLink = `http://localhost:3005/api/auth/verify?token=${verificationToken}`;
+    const verificationLink = `https://tryiz.onrender.com/api/auth/verify?token=${verificationToken}`;
     const mailOptions = {
       from: '"Tryiz" <www.smdaffan5.www@gmail.com>',
       to: email,
@@ -205,6 +205,7 @@ const getVerified = async (req, res) => {
       res.status(500).json({ message: "invalid or expired token" });
     } else {
       res.send("<h2>Email verified successfully! You can now log in.</h2>");
+      res.redirect("https://tryiz.vercel.app/login");
     }
   } catch (error) {
     console.error(error);

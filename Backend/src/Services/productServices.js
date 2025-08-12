@@ -53,6 +53,22 @@ const deleteProductImage = async (iid) => {
   return image;
 };
 
+const getProduct = async (id) => {
+  const product = await prisma.products.findFirst({
+    where: { id },
+    include: {
+      images: {
+        select: {
+          id: true,
+          image_url: true,
+        },
+      },
+    },
+  });
+  return product;
+};
+
+
 const updateProduct = async (
   id,
   name,
@@ -88,6 +104,7 @@ const updateProduct = async (
   return updatedProduct;
 };
 export {
+  getProduct,
   getproducts,
   addProduct,
   deleteProduct,

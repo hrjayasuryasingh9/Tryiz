@@ -31,6 +31,10 @@ export const useWishlistStore = create((set, get) => ({
     }
   },
   getWishlist: async () => {
+    const authUser = useAuthStore.getState().authUser;
+      if (!authUser) {
+        throw new Error("Please Login Or Authenticate yourself");
+      }
     try {
       set({ isgettingWishlist: true });
       const response = await axiosInstance.get("/wishlist/getwishlistitems");

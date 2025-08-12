@@ -41,7 +41,6 @@ export const useAuthStore = create((set, get) => ({
   login: async (data) => {
     try {
       set({ issigningin: true });
-
       const response = await axiosInstance.post("/auth/login", data);
       const user = response.data;
       if (user) {
