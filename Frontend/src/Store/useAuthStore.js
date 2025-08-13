@@ -45,6 +45,7 @@ export const useAuthStore = create((set, get) => ({
       const user = response.data;
       if (user) {
         set({ authUser: user });
+        console.log(user)
         toast.success("Login Successfuly");
         return true;
       } else {
