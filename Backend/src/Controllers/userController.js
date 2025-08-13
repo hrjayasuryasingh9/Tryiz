@@ -307,7 +307,7 @@ const forgotPassword = async (req, res) => {
       email,
       verificationToken
     );
-    const verificationLink = `http://localhost:5173/changepassword?token=${verificationToken}`;
+    const verificationLink = `https://tryiz.vercel.app/changepassword?token=${verificationToken}`;
     const mailOptions = {
       from: '"Tryiz" <www.smdaffan5.www@gmail.com>',
       to: email,
