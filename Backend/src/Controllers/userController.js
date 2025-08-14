@@ -214,61 +214,57 @@ const getVerified = async (req, res) => {
 };
 
 const userLogin = async (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
+  const { email, password } = req.body;
 
   if (!email || !password) {
     return res
       .status(400)
       .json({ message: "Please enter the data in all the given fields" });
   }
+
   try {
     const user = await userServices.getuserdata(email);
-    if (user) {
-      if (user.is_verified == false) {
-        return res
-          .status(404)
-          .json({ message: "Please verify your email before login." });
-      }
+    if (!user) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
 
-      const isPasswordCorrect = await bcrypt.compare(
-        password,
-        user.hashed_password
-      );
+    if (user.is_verified === false) {
+      return res
+        .status(404)
+        .json({ message: "Please verify your email before login." });
+    }
 
-      if (!isPasswordCorrect) {
-        return res.status(401).json({ message: "Invalid credentials" });
-      }
+    const isPasswordCorrect = await bcrypt.compare(password, user.hashed_password);
 
-      generateJWT(user.email, user.id, res);
-      res.status(200).json({
+    if (!isPasswordCorrect) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    // Generate JWT token
+    const accessToken = generateJWT(user.email, user.id);
+
+    // Send token and user info in response
+    res.status(200).json({
+      data: {
         id: user.id,
         fullname: user.fullname,
         email: user.email,
         profile_pic: user.profile_pic,
         address: user.address,
         created_at: user.created_on,
-      });
-    } else {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
+      },
+      accessToken: accessToken,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-const generateJWT = (email, userID, res) => {
-  const token = jwt.sign({ email }, JWT_SECRET, { expiresIn: "7d" });
-
-  res.cookie("jwt", token, {
-    maxAge: 7 * 24 * 60 * 60 * 1000, 
-    httpOnly: true,
-    sameSite: "None", 
-    secure: true,     
+const generateJWT = (email, userID) => {
+  return jwt.sign({ email, id: userID }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
   });
-
-  return token;
 };
 
 const userLogout = async (req, res) => {

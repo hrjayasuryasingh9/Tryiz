@@ -38,33 +38,49 @@ export const useAuthStore = create((set, get) => ({
       set({ issigningin: false });
     }
   },
-  login: async (data) => {
+  login: async (credentials) => { // renamed from data to credentials to avoid shadowing
     try {
       set({ issigningin: true });
-      const response = await axiosInstance.post("/auth/login", data);
-      const user = response.data;
-      if (user) {
-        set({ authUser: user });
-        console.log(user)
-        toast.success("Login Successfuly");
+      const response = await axiosInstance.post("/auth/login", credentials);
+
+      // Destructure correctly from API response
+      const { data: userData, accessToken } = response.data;
+
+      console.log(accessToken);
+      console.log(userData);
+
+      if (userData && accessToken) {
+        // Store user in state
+        set({ authUser: userData });
+
+        // Store token in localStorage
+        localStorage.setItem("accessToken", accessToken);
+
+        toast.success("Login Successfully");
         return true;
       } else {
         return false;
       }
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Signup failed");
+      toast.error(error?.response?.data?.message || "Login failed");
       return false;
     } finally {
       set({ issigningin: false });
     }
   },
+
+
   Logoutuser: async () => {
     try {
       await axiosInstance.get("/auth/logout");
+
+      // Clear state & localStorage
       set({ authUser: null });
+      localStorage.removeItem("accessToken");
+
       toast.success("Logged out successfully");
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message || "Logout failed");
     }
   },
   forgotPasswrod: async (email) => {
