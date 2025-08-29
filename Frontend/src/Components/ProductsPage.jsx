@@ -100,7 +100,7 @@ const ProductsPage = () => {
                                     <div className="flex justify-center items-center text-center text-[13px] text-black font-medium px-2">
                                         {product.name}
                                     </div>
-                                    <h1 className="text-sm text-black/65">₹ {product.price}</h1>
+                                    {/* <h1 className="text-sm text-black/65">₹ {product.price}</h1> */}
                                     <a className="link link-neutral">Shop Now</a>
                                 </div>
                             </div>

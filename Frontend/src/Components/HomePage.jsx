@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useProductsStore } from "../Store/useProductsStore.js";
 import { Heart, Loader } from "lucide-react";
 import { useWishlistStore } from "../Store/useWishlistStore.js";
-import Footer from "./Footer.jsx";
+import { useCartStore } from "../Store/useCartStore.js";
 import main from "../../public/Assest/Hero.jpeg";
 import main2 from "../../public/Assest/Hero2.png";
 import main3 from "../../public/Assest/Hero3.png";
@@ -12,15 +12,26 @@ const HomePage = () => {
   const navigate = useNavigate();
   const { Products, getProducts, isProductLoading } = useProductsStore();
   const {
+    getCartCount, cartCount
+  } = useCartStore();
+  const {
     addingProductId,
     addToWishlist,
     wishlistProductsId,
     getWishlist,
     removeitemfromwishlist,
+    getWishlistCount
   } = useWishlistStore();
+
+  useEffect(() => {
+    getCartCount();
+    getWishlistCount();
+  }, [getCartCount, getWishlistCount]);
+
   useEffect(() => {
     getProducts();
   }, [getProducts]);
+
   useEffect(() => {
     getWishlist();
   }, [getWishlist]);
@@ -151,9 +162,7 @@ const HomePage = () => {
                       <div className="flex justify-center items-center text-center text-[13px] text-black font-medium px-2">
                         {product.name}
                       </div>
-                      <h1 className="text-sm text-black/65">
-                        ₹ {product.price}
-                      </h1>
+
                       <a className="link link-neutral">Shop Now</a>
                     </div>
                   </div>
@@ -231,9 +240,6 @@ const HomePage = () => {
                     <div className="py-3 pb-4 flex justify-center items-center flex-col">
                       <h1 className="text-[13px] text-black font-medium text-center px-2">
                         {product.name}
-                      </h1>
-                      <h1 className="text-sm text-black/65">
-                        ₹ {product.price}
                       </h1>
                       <a className="link link-neutral">Shop Now</a>
                     </div>

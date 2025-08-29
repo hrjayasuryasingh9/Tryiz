@@ -2,10 +2,10 @@ import * as cartServices from "../Services/cartServices.js";
 
 const addCartItem = async (req, res) => {
   try {
-    const uid = req.body.uid;
+    const uid = req.user.id; // ✅ get from logged-in user
     const pid = req.body.pid;
     const quantity = req.body.quantity;
-
+    console.log(uid, pid, quantity)
     const item = await cartServices.addCartItem(uid, pid, quantity);
 
     res
@@ -59,7 +59,7 @@ const updateCartItem = async (req, res) => {
 const getCartCount = async (req, res) => {
   try {
     const uid = req.user.id;
-    const count =await cartServices.getCartCount(uid);
+    const count = await cartServices.getCartCount(uid);
     res.status(200).json({ message: "Here is the count", data: count });
   } catch (error) {
     console.log(error);

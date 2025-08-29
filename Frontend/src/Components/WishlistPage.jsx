@@ -15,7 +15,7 @@ const WishlistPage = () => {
     getWishlist();
   }, [getWishlist]);
   const wishlistlength = wishlist.length;
-  const getProductDetails = () => {};
+  const getProductDetails = () => { };
   return (
     <div className="">
       <div className="bg-base-100 w-full pt-20 min-h-screen">
@@ -73,9 +73,9 @@ const WishlistPage = () => {
                     <div className="flex justify-center items-center text-center text-[13px] text-black font-medium px-2">
                       {product.products.name}
                     </div>
-                    <h1 className="text-sm text-black/65">
+                    {/* <h1 className="text-sm text-black/65">
                       ₹ {product.products.price}
-                    </h1>
+                    </h1> */}
                     <a className="link link-neutral">Shop Now</a>
                   </div>
                 </div>

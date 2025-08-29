@@ -1,15 +1,32 @@
 import prisma from "../../prisma/prismaclient.js";
 
 const addCartItem = async (uid, pid, quantity) => {
-  const item = await prisma.cart.create({
-    data: {
+  // check if item already exists for this user & product
+  const existingItem = await prisma.cart.findFirst({
+    where: {
       uid: uid,
       pid: pid,
-      quantity: quantity,
     },
   });
-  return item;
+
+  if (existingItem) {
+    // update quantity instead of creating new row
+    return await prisma.cart.update({
+      where: { id: existingItem.id },
+      data: { quantity: existingItem.quantity + quantity },
+    });
+  }
+
+  // otherwise create new row
+  return await prisma.cart.create({
+    data: {
+      uid,
+      pid,
+      quantity,
+    },
+  });
 };
+
 
 const getCartItems = async (uid) => {
   const item = await prisma.cart.findMany({

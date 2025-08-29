@@ -3,6 +3,7 @@ import { Loader, Heart, ShoppingCart } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useProductsStore } from "../Store/useProductsStore";
 import { useWishlistStore } from "../Store/useWishlistStore";
+import { useCartStore } from "../Store/useCartStore";
 
 const ProductPage = () => {
     const navigate = useNavigate();
@@ -15,6 +16,8 @@ const ProductPage = () => {
         getWishlist,
         removeitemfromwishlist,
     } = useWishlistStore();
+
+    const { addCartItem, addingCartId } = useCartStore();
     const [selectedImage, setSelectedImage] = useState("");
     const [quantity, setQuantity] = useState(1);
 
@@ -119,8 +122,23 @@ const ProductPage = () => {
                         </button>
                     </div>
                     <div className="flex flex-col gap-4">
-                        <button className="bg-black text-white px-6 py-2 rounded w-full cursor-pointer flex justify-center items-center gap-2" >
-                            <ShoppingCart size={15} /> Add to Cart
+                        <button
+                            className="bg-black text-white px-6 py-2 rounded w-full cursor-pointer flex justify-center items-center gap-2 disabled:opacity-50"
+                            onClick={() => { addCartItem(product.id, quantity) }}
+                            di sabled={addingCartId === product.id}
+                        >
+
+                            {addingCartId === product.id ? (
+                                <>
+                                    <Loader className="animate-spin" size={16} />
+                                    <span>Adding...</span>
+                                </>
+                            ) : (
+                                <>
+                                    <ShoppingCart size={15} />
+                                    <span>Add to Cart</span>
+                                </>
+                            )}
                         </button>
                         <button
                             className="border px-6 py-2 rounded w-full cursor-pointer flex justify-center items-center gap-2"

@@ -13,6 +13,7 @@ import WishlistPage from "./Components/WishlistPage";
 import ProductsPage from "./Components/ProductsPage";
 import ProductPage from "./Components/ProductDetailsPage";
 import Footer from "./Components/Footer";
+import CartPage from "./Components/CartPage";
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -42,7 +43,7 @@ function App() {
         />{" "}
         <Route
           path="/cart"
-          element={authUser ? <WishlistPage /> : <Navigate to="/" />}
+          element={authUser ? <CartPage /> : <Navigate to="/" />}
         />
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/product/:id" element={<ProductPage />} />

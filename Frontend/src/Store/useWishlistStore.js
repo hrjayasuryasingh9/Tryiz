@@ -6,6 +6,7 @@ export const useWishlistStore = create((set, get) => ({
   isgettingWishlist: false,
   addingProductId: null,
   wishlistProductsId: [],
+  wishlistCount: null,
   wishlist: [],
   addToWishlist: async (id) => {
     try {
@@ -70,4 +71,16 @@ export const useWishlistStore = create((set, get) => ({
       set({ addingProductId: null });
     }
   },
+
+  getWishlistCount: async () => {
+    try {
+      const res = await axiosInstance.get("/wishlist/getwishlistcount", {
+        withCredentials: true,
+      });
+      console.log(res.data.data)
+      set({ wishlistCount: res.data.data });
+    } catch (err) {
+      console.error("Error fetching wishlist count", err);
+    }
+  }
 }));
