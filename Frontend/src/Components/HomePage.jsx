@@ -70,7 +70,7 @@ const HomePage = () => {
         </div>
       </div>
       <div className="flex justify-center items-center flex-col">
-        <h1 className="text-3xl py-10 sm:inline text-lg">
+        <h1 className="text-3xl py-10 sm:text-lg">
           EXPLORE THE SELECTION
         </h1>
         <div className="flex justify-center items-center w-full px-5 pb-5 md:pt-2">
