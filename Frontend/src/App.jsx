@@ -55,6 +55,8 @@ function App() {
           element={authUser ? <CartPage /> : <Navigate to="/" />}
         />
         <Route path="/products/:type" element={<ProductsPage />} />
+        <Route path="/products" element={<ProductsPage />} />
+
         <Route path="/product/:id" element={<ProductPage />} />
         <Route path="*" element={<h1>404 Not Found</h1>} />
         <Route path="/orders" element={authUser ? <OrdersPage /> : <Navigate to="/" />} />
