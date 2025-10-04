@@ -77,6 +77,26 @@ const getuserdatawithToken = async (token) => {
   });
   return user;
 };
+
+const getUserById = async (id) => {
+  const user = await prisma.users.findUnique({
+    where: { id },
+  });
+  return user;
+};
+
+const updateUser = async (id, data) => {
+  try {
+    const updatedUser = await prisma.users.update({
+      where: { id },
+      data,
+    });
+    return { success: true, data: updatedUser };
+  } catch (error) {
+    return { success: false, message: error.message };
+  }
+};
+
 export {
   signUpUser,
   verification,
@@ -84,4 +104,6 @@ export {
   addVerificationToken,
   changePassword,
   getuserdatawithToken,
+  getUserById,
+  updateUser,
 };

@@ -18,23 +18,16 @@ const HomePage = () => {
     addingProductId,
     addToWishlist,
     wishlistProductsId,
-    getWishlist,
     removeitemfromwishlist,
     getWishlistCount
   } = useWishlistStore();
 
-  useEffect(() => {
-    getCartCount();
-    getWishlistCount();
-  }, [getCartCount, getWishlistCount]);
+
 
   useEffect(() => {
     getProducts();
   }, [getProducts]);
 
-  useEffect(() => {
-    getWishlist();
-  }, [getWishlist]);
 
   const sunGlasses = Products.filter(
     (product) => product.category === "Sun Glasses"
@@ -76,24 +69,24 @@ const HomePage = () => {
         <div className="flex justify-center items-center w-full px-5 pb-5 md:pt-2">
           <div className="flex justify-center items-center gap-5 md:gap-20">
             <div className="flex justify-between items-center flex-col">
-              <div className="min-w-[120px] max-w-[350px]" onClick={() => { navigate("/products") }}>
+              <div className="min-w-[120px] max-w-[350px] cursor-pointer" onClick={() => { navigate("/products/sunglasses") }}>
                 <img
                   src="https://ap.louisvuitton.com/images/is/image//content/dam/lv/editorial-content/New-Homepage/2024/central/category/women_sunglasses/Women_SG_WW_HP_Category_Push_20240614_DII.jpg"
                   alt="no image found"
                   className="h-full w-full"
                 />
               </div>
-              <p className="py-3 text-sm md:text-lg" onClick={() => { navigate("/products") }}>Unisexual Sun Glasses</p>
+              <p className="py-3 text-sm md:text-lg" onClick={() => { navigate("/products/sunglasses") }}>Unisexual Sun Glasses</p>
             </div>
             <div className="flex justify-between items-center flex-col">
-              <div className="min-w-[120px] max-w-[350px]">
+              <div className="min-w-[120px] max-w-[350px] cursor-pointer" onClick={() => { navigate("/products/eyewear") }}>
                 <img
                   src="https://ap.louisvuitton.com/images/is/image//content/dam/lv/editorial-content/New-Homepage/2024/central/category/women_sunglasses/Women_SG_WW_HP_Category_Push_20240614_DII.jpg"
                   alt="no image found"
                   className="h-full w-full"
                 />
               </div>
-              <p className="py-3 text-sm md:text-lg">Unisexual Eye Wear</p>
+              <p className="py-3 text-sm md:text-lg" onClick={() => { navigate("/products/eyewear") }}>Unisexual Eye Wear</p>
             </div>
           </div>
         </div>

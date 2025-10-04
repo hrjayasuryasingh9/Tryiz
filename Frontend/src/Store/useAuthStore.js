@@ -4,11 +4,14 @@ import toast from "react-hot-toast";
 import { data } from "react-router-dom";
 
 export const useAuthStore = create((set, get) => ({
-  authUser: false,
+  authUser: null,
+  userDetails: null,
   issigningin: false,
-  isCheckingAuth: false,
+  isCheckingAuth: true,
   issendingforgotpasswordrequest: false,
   isResettingPassword: false,
+  isFetchingUser: false,
+  isUpdatingUser: false,
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check");
@@ -69,7 +72,39 @@ export const useAuthStore = create((set, get) => ({
     }
   },
 
-
+  fetchUserDetails: async () => {
+    try {
+      set({ isFetchingUser: true });
+      const res = await axiosInstance.get("/auth/getuser");
+      console.log(res)
+      if (res && res.data.data) {
+        set({ userDetails: res.data.data });
+      }
+    } catch (err) {
+      console.error("fetchUserDetails error:", err);
+      set({ userDetails: null });
+      toast.error(err?.response?.data?.message || "Failed to fetch user");
+    } finally {
+      set({ isFetchingUser: false });
+    }
+  },
+  updateUserDetails: async (payload) => {
+    try {
+      set({ isUpdatingUser: true });
+      const res = await axiosInstance.put("/auth/update", payload);
+      if (res && res.data) {
+        set({ userDetails: res.data });
+        // toast.success("Profile updated");
+        return res.data;
+      }
+    } catch (err) {
+      console.error("updateUserDetails error:", err);
+      toast.error(err?.response?.data?.message || "Update failed");
+      throw err;
+    } finally {
+      set({ isUpdatingUser: false });
+    }
+  },
   Logoutuser: async () => {
     try {
       await axiosInstance.get("/auth/logout");

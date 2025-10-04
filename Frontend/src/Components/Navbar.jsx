@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Drawer from "./Drawer";
 import {
   AlignJustify,
@@ -19,16 +19,8 @@ import { useCartStore } from "../Store/useCartStore.js";
 const Navbar = () => {
   const [isDrawerOpen, setDrawerOpen] = useState(false);
   const { authUser, Logoutuser } = useAuthStore();
-  const { wishlistProductsId, wishlistCount } = useWishlistStore();
+  const { wishlistProductsId, wishlistCount, getWishlistCount } = useWishlistStore();
   const navigate = useNavigate();
-  const wishlistlength = wishlistProductsId.length;
-  const handleLogin = () => {
-    navigate("/login");
-  };
-
-  const handleSignUp = () => {
-    navigate("/signup");
-  };
 
   const handleLogout = () => {
     Logoutuser();
@@ -42,8 +34,13 @@ const Navbar = () => {
   };
 
   const {
-    cartCount
+    cartCount, getCartCount
   } = useCartStore();
+
+  useEffect(() => {
+    getCartCount();
+    getWishlistCount();
+  }, [getCartCount, getWishlistCount, authUser]);
   // console.log(cartCount)
   return (
     <div>
@@ -121,13 +118,21 @@ const Navbar = () => {
                   tabIndex={0}
                   className="menu menu-sm dropdown-content bg-base-100 rounded-box z-2 mt-3 w-40 p-2 shadow"
                 >
-                  <li>
+                  <li onClick={() =>
+                    authUser
+                      ? navigate("/orders")
+                      : toast.error("Please login to access your wishlist")
+                  }>
                     <a className="text-lg cursor-pointer">
                       <CalendarArrowUp className="size-4" />
                       My orders
                     </a>
                   </li>
-                  <li>
+                  <li onClick={() =>
+                    authUser
+                      ? navigate("/profile")
+                      : toast.error("Please login to access your wishlist")
+                  }>
                     <a className="text-lg cursor-pointer">
                       <CircleUser className="size-4" />
                       Profile

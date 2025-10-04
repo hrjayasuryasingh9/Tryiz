@@ -2,6 +2,8 @@
 import React, { useEffect } from "react";
 import { useCartStore } from "../Store/useCartStore";
 import { Trash2, Loader2 } from "lucide-react";
+import { useOrderStore } from "../Store/useOrdersStire";
+import { useNavigate } from "react-router-dom";
 
 const CartPage = () => {
     const {
@@ -19,6 +21,47 @@ const CartPage = () => {
     }, [getCartItems]);
 
     const subtotal = cart.reduce((acc, item) => acc + item.products.price * item.quantity, 0);
+    const { checkout, loading } = useOrderStore();
+    const navigate = useNavigate();
+
+    const loadRazorpayScript = () => {
+        return new Promise((resolve) => {
+            const script = document.createElement("script");
+            script.src = "https://checkout.razorpay.com/v1/checkout.js";
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+        });
+    };
+
+    const handleCheckout = async () => {
+        const res = await loadRazorpayScript();
+        try {
+            const items = cart.map((item) => ({
+                product_id: item.products.id,
+                quantity: item.quantity,
+                price: item.products.price,
+            }));
+
+            const { razorpayOrder } = await checkout(items);
+
+            const options = {
+                key: import.meta.env.VITE_RAZORPAY_KEY,
+                amount: razorpayOrder.amount,
+                currency: razorpayOrder.currency,
+                order_id: razorpayOrder.id,
+                handler: function (response) {
+                    window.location.href = "/orders";
+                    useOrderStore.getState().updatePayment(response);
+                },
+            };
+
+            const rzp = new window.Razorpay(options);
+            rzp.open();
+        } catch (error) {
+            console.error("Checkout failed:", error);
+        }
+    };
 
     return (
         <div className="bg-base-100 pt-25 min-h-screen px-5 md:px-20 ">
@@ -59,7 +102,8 @@ const CartPage = () => {
                                 <img
                                     src={item.products.images[0]?.image_url}
                                     alt={item.products.name}
-                                    className="w-24 h-24 object-cover rounded-lg"
+                                    onClick={() => navigate(`/product/${item.products.id}`)}
+                                    className="w-24 h-24 object-cover rounded-lg cursor-pointer"
                                 />
                                 <div className="flex-1">
                                     <h2 className="text-lg font-semibold line-clamp-2 text-[13px]">{item.products.name}</h2>
@@ -79,7 +123,7 @@ const CartPage = () => {
 
                                         <button
                                             onClick={() => deleteCartItem(item.id)}
-                                            className="text-red-500 hover:text-red-700"
+                                            className="text-red-500 hover:text-red-700 cursor-pointer"
                                             disabled={deletingCartId === item.id}
                                         >
                                             {deletingCartId === item.id ? (
@@ -110,8 +154,19 @@ const CartPage = () => {
                             <span>Total</span>
                             <span>₹ {subtotal}</span>
                         </div>
-                        <button className="w-full mt-6 bg-black text-white py-3 rounded-xl hover:bg-black/80 transition">
-                            Checkout
+                        <button
+                            onClick={handleCheckout}
+                            className="w-full mt-6 bg-black text-white py-3 rounded-xl hover:bg-black/80 transition flex justify-center items-center gap-2"
+                            disabled={loading}
+                        >
+                            {loading ? (
+                                <>
+                                    <Loader2 className="animate-spin" size={20} />
+                                    Processing...
+                                </>
+                            ) : (
+                                "CheckOut"
+                            )}
                         </button>
                     </div>
                 </div>
@@ -122,8 +177,19 @@ const CartPage = () => {
                         <span>Total</span>
                         <span>₹ {subtotal}</span>
                     </div>
-                    <button className="w-full bg-black text-white py-3 rounded-xl hover:bg-black/80 transition">
-                        Checkout
+                    <button
+                        onClick={handleCheckout}
+                        className="w-full mt-6 bg-black text-white py-3 rounded-xl hover:bg-black/80 transition flex justify-center items-center gap-2"
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <>
+                                <Loader2 className="animate-spin" size={20} />
+                                Processing...
+                            </>
+                        ) : (
+                            "CheckOut"
+                        )}
                     </button>
                 </div>
             )}

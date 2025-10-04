@@ -194,6 +194,7 @@ const signUpUser = async (req, res) => {
     }
   }
 };
+
 const getVerified = async (req, res) => {
   const { token } = req.query;
   if (!token) {
@@ -229,9 +230,141 @@ const userLogin = async (req, res) => {
     }
 
     if (user.is_verified === false) {
-      return res
-        .status(404)
-        .json({ message: "Please verify your email before login." });
+      // generate new verification token
+      const verificationToken = crypto.randomBytes(32).toString("hex");
+      await userServices.addVerificationToken(email, verificationToken);
+
+      const verificationLink = `https://tryiz.onrender.com/api/auth/verify?token=${verificationToken}`;
+
+      const mailOptions = {
+        from: '"Tryiz" <www.smdaffan5.www@gmail.com>',
+        to: email,
+        subject: "Verify Your Email",
+        html: `<!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body {
+                    font-family: 'Helvetica Neue', Arial, sans-serif;
+                    line-height: 1.6;
+                    color: #333;
+                    max-width: 600px;
+                    margin: 0 auto;
+                    padding: 0;
+                    background-color: #ffffff;
+                }
+                .header {
+                    text-align: center;
+                    padding: 30px 0;
+                    background-color: #000000;
+                    color: #ffffff;
+                }
+                .header h1 {
+                    font-size: 2.5rem;
+                    margin: 0;
+                    font-weight: 700;
+                    letter-spacing: 2px;
+                    text-transform: uppercase;
+                }
+                .caption {
+                    text-align: center;
+                    font-size: 1.1rem;
+                    color: #666;
+                    margin: 20px 0;
+                    letter-spacing: 1px;
+                }
+                .content {
+                    padding: 30px;
+                    border: 1px solid #e0e0e0;
+                    border-top: none;
+                }
+                .about {
+                    margin: 25px 0;
+                    padding: 20px;
+                    background-color: #f8f8f8;
+                    border-left: 3px solid #000;
+                }
+                .about p {
+                    margin: 10px 0;
+                }
+                .button-container {
+                    text-align: center;
+                    margin: 35px 0;
+                }
+                .verify-button {
+                    display: inline-block;
+                    padding: 14px 35px;
+                    background-color: #000;
+                    color: #fff;
+                    text-decoration: none;
+                    border: 2px solid #000;
+                    font-weight: bold;
+                    font-size: 1rem;
+                    letter-spacing: 1px;
+                    transition: all 0.3s ease;
+                }
+                .verify-button:hover {
+                    background-color: #fff;
+                    color: #000;
+                }
+                .divider {
+                    height: 1px;
+                    background-color: #e0e0e0;
+                    margin: 25px 0;
+                }
+                .footer {
+                    text-align: center;
+                    margin-top: 30px;
+                    font-size: 0.8rem;
+                    color: #999;
+                }
+                .signature {
+                    margin-top: 30px;
+                    font-style: italic;
+                    color: #666;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>Tryiz</h1>
+            </div>
+            
+            <div class="content">
+                <p class="caption">EXPLORE YOURSELF</p>
+                
+                <div class="about">
+                    <p>Welcome to Tryiz Optical - where clarity meets style.</p>
+                    <p>Our store is dedicated to providing premium eyewear that combines precision optics with minimalist design. We believe in enhancing vision without compromising on aesthetics.</p>
+                    <p>Each frame in our collection is carefully selected to offer both visual correction and timeless elegance.</p>
+                </div>
+                
+                <p>To complete your registration and access your account, please verify your email address:</p>
+                
+                <div class="button-container">
+                    <a href="${verificationLink}" class="verify-button">VERIFY EMAIL</a>
+                </div>
+                
+                <div class="divider"></div>
+                
+                <p>If you didn't request this verification, please ignore this email or contact our support team.</p>
+                
+                    <p>The Tryiz Team</p>
+                </div>
+                
+                <div class="footer">
+                    <p>© ${new Date().getFullYear()} Tryiz Optical. All Rights Reserved.</p>
+                </div>
+            </div>
+        </body>
+        </html>`,
+      };
+
+      await transporter.sendMail(mailOptions);
+
+      return res.status(403).json({
+        message: "Please verify your email. A new verification link has been sent.",
+      });
     }
 
     const isPasswordCorrect = await bcrypt.compare(password, user.hashed_password);
@@ -239,11 +372,7 @@ const userLogin = async (req, res) => {
     if (!isPasswordCorrect) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-
-    // Generate JWT token
     const accessToken = generateJWT(user.email, user.id);
-
-    // Send token and user info in response
     res.status(200).json({
       data: {
         id: user.id,
@@ -473,6 +602,64 @@ const changePassword = async (req, res) => {
   }
 };
 
+const getUserDetails = async (req, res) => {
+  try {
+    // Assuming you're using JWT auth middleware
+    // and it attaches decoded user info into req.user
+    const userId = req.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const user = await userServices.getUserById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json({
+      data: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone_number: user.phone_number,
+        profile_pic: user.profile_pic,
+        address: user.address,
+        created_at: user.created_on,
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching user details:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const updateUserController = async (req, res) => {
+  try {
+    const { id } = req.user; // 👈 assuming JWT middleware sets req.user
+    const { fullname, phone_number, address } = req.body;
+
+    const result = await userServices.updateUser(id, {
+      name: fullname,
+      phone_number,
+      address
+    });
+
+    if (!result.success) {
+      return res.status(400).json({ success: false, message: result.message });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user: result.data,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 export {
   signUpUser,
   getVerified,
@@ -481,4 +668,6 @@ export {
   checkAuth,
   forgotPassword,
   changePassword,
+  getUserDetails,
+  updateUserController
 };

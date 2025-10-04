@@ -14,6 +14,9 @@ import ProductsPage from "./Components/ProductsPage";
 import ProductPage from "./Components/ProductDetailsPage";
 import Footer from "./Components/Footer";
 import CartPage from "./Components/CartPage";
+import ProfilePage from "./Components/ProfilePage";
+import OrdersPage from "./Components/Orderspage";
+import { Loader } from "lucide-react";
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth } = useAuthStore();
@@ -41,12 +44,20 @@ function App() {
           path="/wishlist"
           element={authUser ? <WishlistPage /> : <Navigate to="/" />}
         />{" "}
+
+        <Route
+          path="/profile"
+          element={authUser ? <ProfilePage /> : <Navigate to="/" />}
+        />
+
         <Route
           path="/cart"
           element={authUser ? <CartPage /> : <Navigate to="/" />}
         />
-        <Route path="/products" element={<ProductsPage />} />
+        <Route path="/products/:type" element={<ProductsPage />} />
         <Route path="/product/:id" element={<ProductPage />} />
+        <Route path="*" element={<h1>404 Not Found</h1>} />
+        <Route path="/orders" element={authUser ? <OrdersPage /> : <Navigate to="/" />} />
       </Routes>
       <Footer />
       <Toaster />

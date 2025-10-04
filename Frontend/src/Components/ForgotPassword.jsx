@@ -80,7 +80,7 @@ const ForgotPassword = () => {
           </form>
         </div>
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };

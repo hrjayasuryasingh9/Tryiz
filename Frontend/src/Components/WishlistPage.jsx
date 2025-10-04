@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import Footer from "./Footer";
 import { Heart, Loader } from "lucide-react";
 import { useWishlistStore } from "../Store/useWishlistStore";
+import { useNavigate } from "react-router-dom";
 const WishlistPage = () => {
   const {
     getWishlist,
@@ -16,6 +17,8 @@ const WishlistPage = () => {
   }, [getWishlist]);
   const wishlistlength = wishlist.length;
   const getProductDetails = () => { };
+  const navigate = useNavigate();
+
   return (
     <div className="">
       <div className="bg-base-100 w-full pt-20 min-h-screen">
@@ -76,7 +79,7 @@ const WishlistPage = () => {
                     {/* <h1 className="text-sm text-black/65">
                       ₹ {product.products.price}
                     </h1> */}
-                    <a className="link link-neutral">Shop Now</a>
+                    <a className="link link-neutral" onClick={() => { navigate(`/product/${product.products.id}`) }}> Shop Now</a>
                   </div>
                 </div>
               ))}

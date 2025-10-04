@@ -18,9 +18,11 @@ model users {
   profile_pic        String?
   address            String?
   created_on         DateTime?  @default(now()) @db.Timestamp(6)
+
   cart               cart[]
   reviews            reviews[]
   wishlist           wishlist[]
+  orders             orders[]
 }
 
 model products {
@@ -30,10 +32,12 @@ model products {
   price        Decimal    @db.Decimal(10, 2)
   category     String     @db.VarChar(100)
   availability Boolean?   @default(true)
+
   cart         cart[]
   images       images[]
   reviews      reviews[]
   wishlist     wishlist[]
+  order_items  order_items[]
 }
 
 model images {
@@ -72,4 +76,36 @@ model wishlist {
   added_at DateTime? @default(now()) @db.Timestamp(6)
   products products  @relation(fields: [pid], references: [id], onDelete: Cascade, onUpdate: NoAction)
   users    users     @relation(fields: [uid], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+enum OrderStatus {
+  pending
+  paid
+  failed
+}
+
+model orders {
+  id                  Int       @id @default(autoincrement())
+  user_id             Int
+  amount              Decimal   @db.Decimal(10, 2)
+  status              OrderStatus @default(pending)
+  razorpay_order_id    String
+  razorpay_payment_id  String?   @db.VarChar(255)
+  razorpay_signature   String?   @db.VarChar(255)
+  created_at          DateTime  @default(now())
+  updated_at          DateTime  @updatedAt
+
+  users               users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  order_items         order_items[]
+}
+
+model order_items {
+  id        Int      @id @default(autoincrement())
+  order_id  Int
+  product_id Int
+  quantity  Int      @default(1)
+  price     Decimal  @db.Decimal(10, 2)
+
+  orders    orders   @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  products  products @relation(fields: [product_id], references: [id], onDelete: Cascade)
 }
